@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Ganti dengan judul Web App Anda -->
+    <title>TEMIN WebApp</title>
+    
+    <!-- Meta SEO Dasar -->
+    <meta name="description" content="Aplikasi yang didukung oleh Google Apps Script dan Vercel" />
+    
+    <!-- Tailwind CSS untuk styling Loading State -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        /* Memastikan tidak ada margin/scroll berlebih di luar iframe */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Mencegah double scrollbar */
+            background-color: #f8fafc; /* Warna background saat loading */
+        }
+        
+        /* Styling iframe agar mengisi layar penuh secara absolut */
+        #gas-iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            z-index: 10;
+            opacity: 0; /* Sembunyikan iframe sebelum selesai dimuat */
+            transition: opacity 0.5s ease-in-out;
+        }
+    </style>
+
+    <!-- SCRIPT AUTO-CONVERT FAVICON KE LH3 -->
+    <script>
+        // 🎨 1. MASUKKAN LINK GOOGLE DRIVE GAMBAR LOGO ANDA DI SINI
+        // Contoh: https://drive.google.com/file/d/1OuPfjVgcpupQOAOt9D1IhJt96Lune7_z/view
+        const linkGoogleDriveLogo = "https://drive.google.com/file/d/1OuPfjVgcpupQOAOt9D1IhJt96Lune7_z/view?usp=drive_link";
+
+        if (linkGoogleDriveLogo && linkGoogleDriveLogo !== "MASUKAN_LINK_GOOGLE_DRIVE_LOGO_ANDA_DISINI") {
+            // Gunakan Regex untuk mengambil ID Drive (Karakter panjang 25+ yang unik)
+            const driveIdMatch = linkGoogleDriveLogo.match(/[-\w]{25,}/);
+            
+            // Auto convert ke format lh3 jika ID ditemukan, jika tidak pakai link aslinya
+            const finalLh3Url = driveIdMatch ? `https://lh3.googleusercontent.com/d/${driveIdMatch[0]}` : linkGoogleDriveLogo;
+
+            // Memasang Favicon secara dinamis
+            const favicon = document.createElement('link');
+            favicon.rel = 'icon';
+            favicon.href = finalLh3Url;
+            document.head.appendChild(favicon);
+
+            // Memasang Apple Touch Icon (Agar rapi saat di-Add to Home Screen di iPhone)
+            const appleIcon = document.createElement('link');
+            appleIcon.rel = 'apple-touch-icon';
+            appleIcon.href = finalLh3Url;
+            document.head.appendChild(appleIcon);
+        }
+    </script>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+
+    <!-- Loading State: Tampil selama GAS memuat halaman -->
+    <div id="loading-screen" class="absolute inset-0 z-0 flex flex-col items-center justify-center bg-slate-50">
+        <div class="relative w-16 h-16">
+            <div class="absolute inset-0 rounded-full border-4 border-slate-200"></div>
+            <div class="absolute inset-0 rounded-full border-4 border-blue-600 border-t-transparent animate-spin"></div>
+        </div>
+        <p class="mt-4 text-slate-600 font-medium font-sans animate-pulse">Menghubungkan ke Server...</p>
+    </div>
+
+    <!-- ⚠️ WAJIB: Ganti atribut src di bawah ini dengan URL /exec GAS Anda -->
+    <iframe 
+        id="gas-iframe" 
+        src="https://script.google.com/macros/s/AKfycbybhmpRGnvp05ItV-9vHlXxvzntN57UCAFbdf8ydrz1IMyMmAI9VJASgStDUBJCC2f-TA/exec" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+        allowfullscreen>
+    </iframe>
+
+    <script>
+        // Logika untuk menghilangkan loading spinner setelah iframe GAS selesai dimuat
+        document.getElementById('gas-iframe').addEventListener('load', function() {
+            // Sembunyikan loading screen
+            document.getElementById('loading-screen').style.display = 'none';
+            // Tampilkan iframe dengan efek fade-in
+            this.style.opacity = '1';
+        });
+    </script>
+
+</body>
+</html>
